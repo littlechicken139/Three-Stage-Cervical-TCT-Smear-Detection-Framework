@@ -259,20 +259,12 @@ This project is open-source under the **MIT License**. For academic research onl
 
 For questions regarding code usage and academic collaboration, please contact the corresponding authors:
 
-- **Junfu Liu**
-- **Binzhi Gao**
-- **Xiaoyang Wang**
-- **Ting Liu**
-- **Hong Zhu**
+- **Junfu Liu**: 3230513006@stu.xaut.edu.cn
+- **Binzhi Gao**: 3230913025@stu.xaut.edu.cn
+- **Xiaoyang Wang**: 3221631002@stu.xaut.edu.cn
+- **Ting Liu**: 3240412032@stu.xaut.edu.cn
+- **Hong Zhu**: zhuhong@xaut.edu.cn
 - **Jing Shi**: shijing@xaut.edu.cn
 - **Yi Yang**: yangyi@xaut.edu.cn
 
 ---
-
-## 📝 Project Progress
-
-- [x] Release Stage 1: FlexInc-YOLOv11 Detection Module
-- [ ] Release Stage 2: DINOv3 Feature Extraction Module
-- [ ] Release Stage 3: Lightweight MLP Classification Module
-- [ ] Upload pre-trained model weights
-- [ ] Add comprehensive documentation
