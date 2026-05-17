@@ -1,0 +1,8 @@
+path: C:\Users\Virgil\Downloads\FlexInc-YOLO\CellDetectSampleDataset
+train: train/images
+val: val/images
+test: test/images
+nc: 1
+
+names:
+- cell

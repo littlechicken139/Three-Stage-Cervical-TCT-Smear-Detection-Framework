@@ -1,0 +1,9 @@
+﻿Model Information,Value
+Classifier Type,MLP
+Input Dimension,384
+Number of Classes,6
+Total Samples,291
+File Size (MB),1.393838882446289
+GFLOPs,0.0007224320000000001
+FPS,2862.84981024927
+Avg Latency (ms),0.3493022918701172

@@ -1,0 +1,5 @@
+﻿Efficiency Metric,Value,Description
+File Size (MB),1.393838882446289,模型文件大小
+GFLOPs,0.0007224320000000001,计算复杂度(十亿次浮点运算)
+FPS,2862.84981024927,每秒推理次数
+Avg Latency (ms),0.3493022918701172,平均推理延迟
