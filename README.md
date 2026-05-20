@@ -11,7 +11,7 @@ This repository provides the complete implementation of the proposed three-stage
 - DINOv3 feature extraction pipeline
 - Lightweight MLP classification module
 
-**Keywords**: Cervical TCT smears; YOLOv11; Multi-scale detection; DINOv3; Fine-grained classification; Medical image analysis
+**Keywords**: cervical TCT smears; YOLO; multi-scale object detection; fine-grained classification; DINOv3; medical image analysis
 
 ---
 
@@ -29,16 +29,16 @@ The complete three-stage pipeline of the proposed framework:
 
 ## 📝 Abstract
 
-Cervical ThinPrep Cytologic Test (TCT) smear image analysis faces challenges including densely distributed cells, severe overlap, large scale variation, and subtle fine-grained differences among abnormal cells. To address these issues, this paper proposes a three-stage analysis framework combining an improved YOLOv11 detector and a frozen DINOv3 backbone.
+To address the challenges of dense overlapping cells, large scale variations, and subtle differences among abnormal cells in cervical TCT smear images, this paper proposes a three-stage analysis framework based on FlexInc-YOLOv11 and DINOv3. In the first stage, an improved FlexInc-YOLOv11 detector is used to localize candidate cell regions. The second stage employs a frozen DINOv3 backbone to extract high-level semantic features. In the third stage, a lightweight MLP classification head performs fine-grained classification under both pathological and morphological label standards. Experimental results demonstrate that the proposed method achieves superior performance in both detection and classification tasks, providing an effective technical solution for automated cervical cell screening.
 
 ---
 
 ## 🏆 Contributions
 
-1. Propose a three-stage decoupled framework that separates detection, feature extraction, and fine-grained classification, better adapting to dense overlapping cell scenarios.
-2. Present FlexInc-YOLOv11 detector with FlexInc modules and MSCA detection head, improving multi-scale and dense occlusion detection capability.
-3. Adopt frozen DINOv3 backbone for feature extraction, effectively alleviating overfitting on small-sample medical data.
-4. Design lightweight MLP classification head achieving dual fine-grained classification under pathological and morphological label standards.
+1. Propose a decoupled three-stage framework that separates detection, feature extraction, and classification, reducing the difficulty of joint optimization for dense cell recognition.
+2. Propose the FlexInc-YOLOv11 detection model, which improves cell detection accuracy in multi-scale and densely occluded scenarios through FlexInc modules and MSCA detection head.
+3. Adopt a feature extraction strategy with frozen DINOv3 backbone, effectively alleviating overfitting on small-sample medical data.
+4. Design a lightweight MLP classification head to achieve dual-standard fine-grained classification (pathological and morphological), enhancing clinical practicality.
 
 ---
 
@@ -60,7 +60,76 @@ Frozen pre-trained DINOv3 backbone extracts high-level semantic features from cr
 
 ### 3. Lightweight Classification Heads
 
-Multiple classifier architectures for efficient fine-grained classification.
+Lightweight MLP classification head for dual-standard fine-grained classification.
+
+---
+
+## 📁 Repository Structure
+
+```plaintext
+Three-Stage-Cervical-TCT-Smear-Detection-Framework/
+├── README.md
+├── LICENSE
+├── requirements.txt
+├── assets/
+├── Stage1-FlexInc-YOLO/
+│   ├── train_yolo.py
+│   ├── detect.py
+│   ├── yolo11-FlexInc.yaml
+│   ├── CellDetectSampleDataset/
+│   └── ultralytics/
+├── Stage2-DINOv3/
+│   └── extract_dinov3_features.py
+└── Stage3-Classifier/
+    ├── train_classifier.py
+    └── evaluate_classifier.py
+```
+
+---
+
+## 🛠️ Environment Setup
+
+```bash
+git clone https://github.com/littlechicken139/Three-Stage-Cervical-TCT-Smear-Detection-Framework.git
+cd Three-Stage-Cervical-TCT-Smear-Detection-Framework
+pip install -r requirements.txt
+```
+
+---
+
+## 🚀 Training & Testing Commands
+
+### Stage 1: Train Detection Model
+
+```bash
+cd Stage1-FlexInc-YOLO
+python train_yolo.py --data CellDetectSampleDataset/CellDetectSampleDataset.yaml --cfg yolo11-FlexInc.yaml --epochs 100 --batch-size 8
+```
+
+### Stage 1: Inference
+
+```bash
+cd Stage1-FlexInc-YOLO
+python detect.py --weights runs/detect/train/weights/best.pt --source your_image_path --conf 0.5
+```
+
+---
+
+## 📊 Dataset Description
+
+The TCT cervical smear dataset used in this study was collected from **The First Affiliated Hospital of Zhengzhou University**, with strict anonymization to protect patient privacy:
+
+| Attribute | Details |
+|-----------|---------|
+| **Patient Count** | Involving dozens of independent patients (anonymized) |
+| **Data Scale** | Training set: 2,460 TCT smear images with 112,439 annotations; Test set: 614 images with 30,044 annotations |
+| **Imaging Device** | Medical biological microscope |
+| **Staining Method** | Pap staining |
+| **Annotation Standard** | All annotations were completed and reviewed by professional pathologists, following clinical TCT cytology standards |
+
+**Note**: Due to medical privacy constraints, the raw dataset cannot be publicly released. We provide complete training code, model weights, and reproduction configuration for researchers.
+
+> ⚠️ **Important**: The dataset included in this repository is solely a **sample** (a small portion of the full dataset) for code testing and validation purposes. The class categories and data quantities shown here are for reference only. They do not represent the complete dataset used in the paper.
 
 ---
 
@@ -79,145 +148,12 @@ Multiple classifier architectures for efficient fine-grained classification.
 
 ### Classification Performance
 
-**Pathological Classification Accuracy**: 87.36%
+**Pathological Classification Accuracy**: 87.78%
 - 4 classes: Benign epithelial cells, Inflammatory response cells, Infection-related cells, Atypical/precancerous cells
 
-**Morphological Classification Accuracy**: 89.19%
+**Morphological Classification Accuracy**: 89.64%
 - 6 classes: Normal squamous cells, Abnormal squamous cells, Glandular cell-related cells, Inflammatory cells, Reactive/metaplastic cells, Other
 
-### Visualization Results
-
-![Visual Result](assets/figures/visual_result.png)
-![Confusion Matrix](assets/figures/confusion_matrix.png)
-
----
-
-## 📁 Repository Structure
-
-```plaintext
-Three-Stage-Cervical-TCT-Smear-Detection-Framework/
-├── README.md                   # Project documentation
-├── LICENSE                     # MIT License
-├── requirements.txt            # Python dependencies
-├── assets/                     # README image resources
-│   └── figures/
-│       ├── framework.png       # Framework diagram
-│       ├── visual_result.png   # Visualization results
-│       └── confusion_matrix.png # Confusion matrix
-│
-├── Stage1-FlexInc-YOLO/        # Stage 1: Detection Module
-│   ├── train_yolo.py           # FlexInc-YOLOv11 training script
-│   ├── detect.py               # Inference script
-│   ├── yolov11s-FlexInc.yaml   # Model configuration file
-│   ├── data/detection/         # Detection dataset directory
-│   │   ├── train/              # Training set
-│   │   └── val/                # Validation set
-│   └── ultralytics/            # Modified YOLO framework
-│       ├── cfg/                # Configuration files
-│       ├── data/               # Data loading utilities
-│       ├── engine/             # Training/validation engines
-│       └── models/             # Model definitions
-│
-├── Stage2-DINOv3/              # Stage 2: Feature Extraction
-│   ├── extract_dinov3_features.py  # DINOv3 feature extraction
-│   ├── dinov3_vits16_pretrain.pth  # Pre-trained weights
-│   ├── dinov3/                 # DINOv3 core modules
-│   └── data/image/             # Cropped cell images
-│       ├── train/              # Training set features
-│       └── val/                # Validation set features
-│
-└── Stage3-Classifier/           # Stage 3: Classification Module
-    ├── train_classifier.py     # Classifier training script
-    ├── evaluate_classifier.py  # Classifier evaluation script
-    ├── features/              # Extracted features (HDF5)
-    │   ├── train/             # Training features
-    │   └── val/               # Validation features
-    └── models/                # Trained classifier models
-```
-
----
-
-## 🛠️ Environment Setup
-
-### Hardware Environment
-
-- **Operating System**: Ubuntu 22.04
-- **GPU**: vGPU-48GB
-- **CPU**: 12 vCPU Intel(R) Xeon(R) Platinum 8260
-- **CUDA**: 12.8
-
-### Software Dependencies
-
-- **Python**: 3.12
-- **Deep Learning Frameworks**: PyTorch, Ultralytics
-
-### Installation Steps
-
-```bash
-# Clone the repository
-git clone https://github.com/littlechicken139/Three-Stage-Cervical-TCT-Smear-Detection-Framework.git
-cd Three-Stage-Cervical-TCT-Smear-Detection-Framework
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
----
-
-## 🚀 Training & Testing Commands
-
-### Stage 1: Train Detection Model
-
-```bash
-cd Stage1-FlexInc-YOLO
-python train_yolo.py --data data/detection/cell_detection.yaml --cfg yolov11s-FlexInc.yaml --epochs 100 --batch-size 8
-```
-
-### Stage 1: Inference
-
-```bash
-cd Stage1-FlexInc-YOLO
-python detect.py --weights runs/detect/train/weights/best.pt --source your_image_path --conf 0.5
-```
-
-### Stage 2: Extract DINOv3 Features
-
-```bash
-cd Stage2-DINOv3
-python extract_dinov3_features.py --input_dir data/image/train --output_dir ../Stage3-Classifier/features/train
-```
-
-### Stage 3: Train Classification Model
-
-```bash
-cd Stage3-Classifier
-python train_classifier.py --feature_dir features/train --output_dir models --classifier_type MLP
-```
-
-### Model Evaluation
-
-```bash
-cd Stage3-Classifier
-python evaluate_classifier.py --feature_dir features/val --model_dir models --classifier_type MLP
-```
-
----
-
-## 📊 Dataset Description
-
-The TCT cervical smear dataset used in this study was collected from **The First Affiliated Hospital of Zhengzhou University**, with strict anonymization to protect patient privacy:
-
-| Attribute | Details |
-|-----------|---------|
-| **Patient Count** | dozens of independent patients |
-| **Data Scale** | Training set: 2,460 TCT smear images with 112,439 annotations; Test set: 614 images with 30,044 annotations |
-| **Imaging Device** | Medical biological microscope (Olympus BX53) |
-| **Staining Method** | Pap staining |
-| **Annotation Standard** | Annotated and double-checked by professional pathologists following TCT/Pap cytology standards |
-
-**Note**: Due to medical privacy constraints, the raw dataset cannot be publicly released. We provide complete training code, model weights, and reproduction configuration for researchers.
-
-> ⚠️ **Important**: The dataset included in this repository is solely a **sample** (a small portion of the full dataset) for code testing and validation purposes. The class categories and data quantities shown here are for reference only. They do not represent the complete dataset used in the paper.
 
 ---
 
@@ -225,8 +161,8 @@ The TCT cervical smear dataset used in this study was collected from **The First
 
 | Model | Params (M) | FLOPs (G) | FPS |
 |-------|-----------|-----------|-----|
-| YOLOv11s | 7.18 | 14.8 | 92 |
-| Ours (FlexInc-YOLOv11) | 7.92 | 16.3 | 85 |
+| YOLOv11s | 18.3 | 21.3 | 102.8 |
+| Ours (FlexInc-YOLOv11) | 28.3 | 19.7 | 99.74 |
 
 ---
 
@@ -237,10 +173,10 @@ If this repository helps your research, please cite our paper:
 ```bibtex
 @article{Liu2026TCT,
   title={A Three-Stage Analysis Framework for Cervical TCT Smears Based on FlexInc-YOLOv11 and DINOv3},
-  author={Liu, Junfu and Gao, Binzhi and Wang, Xiaoyang and Liu, Ting and Zhu, Hong and Shi, Jing and Yang, Yi},
+  author={Liu, Junfu and Gao, Binzhi and Wang, Xiaoyang and Liu, Ting and Huang, Sirui and Zhu, Hong and Shi, Jing and Yang, Yi},
   journal={Applied Sciences},
   volume={16},
-  number={X},
+  number={11},
   pages={XXXX},
   year={2026},
   publisher={MDPI}
@@ -257,14 +193,16 @@ This project is open-source under the **MIT License**. For academic research onl
 
 ## 📧 Contact
 
-For questions regarding code usage and academic collaboration, please contact the corresponding authors:
+**Author Affiliations and Emails:**
 
-- **Junfu Liu**: 3230513006@stu.xaut.edu.cn
-- **Binzhi Gao**: 3230913025@stu.xaut.edu.cn
-- **Xiaoyang Wang**: 3221631002@stu.xaut.edu.cn
-- **Ting Liu**: 3240412032@stu.xaut.edu.cn
-- **Hong Zhu**: zhuhong@xaut.edu.cn
-- **Jing Shi**: shijing@xaut.edu.cn
-- **Yi Yang**: yangyi@xaut.edu.cn
+1. School of Economics and Management, Xi'an University of Technology, Xi'an 710048, China; 3230513006@stu.xaut.edu.cn (J.L.); yangyi@xaut.edu.cn (Y.Y.)
+2. School of Computer Science and Engineering, Xi'an University of Technology, Xi'an 710048, China; 3230913025@stu.xaut.edu.cn (B.G.)
+3. School of Civil Engineering and Architecture, Xi'an University of Technology, Xi'an 710048, China; 3221631002@stu.xaut.edu.cn (X.W.)
+4. School of Automation and Information Engineering, Xi'an University of Technology, Xi'an 710048, China; 3240412032@stu.xaut.edu.cn (T.L.); 3240416022@stu.xaut.edu.cn (S.H.); zhuhong@xaut.edu.cn (H.Z.); shijing@xaut.edu.cn (J.S.)
+
+*Correspondence: shijing@xaut.edu.cn (J.S.); yangyi@xaut.edu.cn (Y.Y.)*
+
+**Featured Application:**
+The proposed three-stage deep learning framework can be integrated into computer-aided diagnosis (CAD) systems for automated and high-precision cervical cancer screening, significantly reducing the workload of pathologists and improving diagnostic consistency in clinical environments.
 
 ---
